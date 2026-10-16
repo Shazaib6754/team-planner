@@ -1,7 +1,8 @@
 
 import './App.css'
-import { employees } from './data/mockData'
+import { employees, tasks } from './data/mockData'
 import EmployeeList from './components/EmployeeList'
+import TaskList from './components/TaskList'
 
 function App() {
   return (
@@ -18,14 +19,7 @@ function App() {
       <div className="grid gap-6 md:grid-cols-2">
         <EmployeeList employees={employees} />
 
-        <section className="rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-slate-800">
-            Weekplanning
-          </h2>
-          <p className="mt-2 text-slate-600">
-            Hier komt straks de planning van maandag tot en met vrijdag.
-          </p>
-        </section>
+        <TaskList tasks={tasks} />
       </div>
     </main>
   )
