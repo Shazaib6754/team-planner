@@ -1,5 +1,5 @@
 
-import type { Employee, Task } from '../types'
+import type { Employee, Task, ScheduledTask } from '../types'
 
 export const employees: Employee[] = [
   { id: 1, name: 'Sam de Vries', role: 'Monteur' },
@@ -37,4 +37,13 @@ export const tasks: Task[] = [
     description: 'De werkzaamheden voor de volgende week plannen',
     duration: 45,
   },
+]
+
+export const schedule: ScheduledTask[] = [
+  { id: 1, taskId: 1, employeeId: 1, day: 'Maandag' },
+  { id: 2, taskId: 2, employeeId: 2, day: 'Maandag' },
+  { id: 3, taskId: 3, employeeId: 4, day: 'Dinsdag' },
+  { id: 4, taskId: 4, employeeId: 6, day: 'Woensdag' },
+  { id: 5, taskId: 1, employeeId: 5, day: 'Donderdag' },
+  { id: 6, taskId: 2, employeeId: 8, day: 'Vrijdag' },
 ]

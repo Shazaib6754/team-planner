@@ -1,8 +1,9 @@
 
 import './App.css'
-import { employees, tasks } from './data/mockData'
+import { employees, tasks, schedule } from './data/mockData'
 import EmployeeList from './components/EmployeeList'
 import TaskList from './components/TaskList'
+import WeekView from './components/WeekView'
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <h1 className="text-3xl font-bold text-slate-900">
           Team Planner
         </h1>
+
         <p className="mt-2 text-slate-600">
           Plan medewerkers en taken voor de werkweek.
         </p>
@@ -21,6 +23,12 @@ function App() {
 
         <TaskList tasks={tasks} />
       </div>
+
+      <WeekView
+        employees={employees}
+        tasks={tasks}
+        schedule={schedule}
+      />
     </main>
   )
 }
