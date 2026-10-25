@@ -21,6 +21,12 @@ function App() {
     setEmployees((currentEmployees) => [...currentEmployees, newEmployee])
   }
 
+  function handleDeleteEmployee(id: number) {
+    setEmployees((currentEmployees) =>
+      currentEmployees.filter((employee) => employee.id !== id)
+    )
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -36,7 +42,11 @@ function App() {
       <div className="grid gap-6 md:grid-cols-2">
         <section>
           <EmployeeForm onAdd={handleAddEmployee} />
-          <EmployeeList employees={employees} />
+
+          <EmployeeList
+            employees={employees}
+            onDelete={handleDeleteEmployee}
+          />
         </section>
 
         <TaskList tasks={tasks} />
