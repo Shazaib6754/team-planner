@@ -64,6 +64,21 @@ function App() {
     )
   }
 
+  function handleEditTask(
+    id: number,
+    title: string,
+    description: string,
+    duration: number
+  ) {
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
+        task.id === id
+          ? { ...task, title, description, duration }
+          : task
+      )
+    )
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -93,6 +108,7 @@ function App() {
           <TaskList
             tasks={tasks}
             onDelete={handleDeleteTask}
+            onEdit={handleEditTask}
           />
         </section>
       </div>
