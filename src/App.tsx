@@ -1,11 +1,26 @@
 
+import { useState } from 'react'
 import './App.css'
-import { employees, tasks, schedule } from './data/mockData'
+import { employees as initialEmployees, tasks, schedule } from './data/mockData'
+import type { Employee } from './types'
 import EmployeeList from './components/EmployeeList'
+import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
 import WeekView from './components/WeekView'
 
 function App() {
+  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+
+  function handleAddEmployee(name: string, role: string) {
+    const newEmployee: Employee = {
+      id: Math.max(0, ...employees.map((employee) => employee.id)) + 1,
+      name,
+      role,
+    }
+
+    setEmployees((currentEmployees) => [...currentEmployees, newEmployee])
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -19,7 +34,10 @@ function App() {
       </header>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <EmployeeList employees={employees} />
+        <section>
+          <EmployeeForm onAdd={handleAddEmployee} />
+          <EmployeeList employees={employees} />
+        </section>
 
         <TaskList tasks={tasks} />
       </div>
