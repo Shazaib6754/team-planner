@@ -1,15 +1,21 @@
 
 import { useState } from 'react'
 import './App.css'
-import { employees as initialEmployees, tasks, schedule } from './data/mockData'
-import type { Employee } from './types'
+import {
+  employees as initialEmployees,
+  tasks as initialTasks,
+  schedule,
+} from './data/mockData'
+import type { Employee, Task } from './types'
 import EmployeeList from './components/EmployeeList'
 import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
+import TaskForm from './components/TaskForm'
 import WeekView from './components/WeekView'
 
 function App() {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
+  const [tasks, setTasks] = useState<Task[]>(initialTasks)
 
   function handleAddEmployee(name: string, role: string) {
     const newEmployee: Employee = {
@@ -37,6 +43,21 @@ function App() {
     )
   }
 
+  function handleAddTask(
+    title: string,
+    description: string,
+    duration: number
+  ) {
+    const newTask: Task = {
+      id: Math.max(0, ...tasks.map((task) => task.id)) + 1,
+      title,
+      description,
+      duration,
+    }
+
+    setTasks((currentTasks) => [...currentTasks, newTask])
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -60,7 +81,11 @@ function App() {
           />
         </section>
 
-        <TaskList tasks={tasks} />
+        <section>
+          <TaskForm onAdd={handleAddTask} />
+
+          <TaskList tasks={tasks} />
+        </section>
       </div>
 
       <WeekView
