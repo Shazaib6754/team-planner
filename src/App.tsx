@@ -58,6 +58,12 @@ function App() {
     setTasks((currentTasks) => [...currentTasks, newTask])
   }
 
+  function handleDeleteTask(id: number) {
+    setTasks((currentTasks) =>
+      currentTasks.filter((task) => task.id !== id)
+    )
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -84,7 +90,10 @@ function App() {
         <section>
           <TaskForm onAdd={handleAddTask} />
 
-          <TaskList tasks={tasks} />
+          <TaskList
+            tasks={tasks}
+            onDelete={handleDeleteTask}
+          />
         </section>
       </div>
 
