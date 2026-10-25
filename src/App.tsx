@@ -27,6 +27,16 @@ function App() {
     )
   }
 
+  function handleEditEmployee(id: number, name: string, role: string) {
+    setEmployees((currentEmployees) =>
+      currentEmployees.map((employee) =>
+        employee.id === id
+          ? { ...employee, name, role }
+          : employee
+      )
+    )
+  }
+
   return (
     <main className="min-h-screen bg-slate-100 p-8">
       <header className="mb-8">
@@ -46,6 +56,7 @@ function App() {
           <EmployeeList
             employees={employees}
             onDelete={handleDeleteEmployee}
+            onEdit={handleEditEmployee}
           />
         </section>
 
