@@ -4,9 +4,9 @@ import './App.css'
 import {
   employees as initialEmployees,
   tasks as initialTasks,
-  schedule,
+  schedule as initialSchedule,
 } from './data/mockData'
-import type { Employee, Task } from './types'
+import type { Employee, Task, ScheduledTask } from './types'
 import EmployeeList from './components/EmployeeList'
 import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
@@ -16,29 +16,39 @@ import WeekView from './components/WeekView'
 function App() {
   const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
+  const [scheduledTasks, setScheduledTasks] =
+    useState<ScheduledTask[]>(initialSchedule)
 
   function handleAddEmployee(name: string, role: string) {
-    const newEmployee: Employee = {
-      id: Math.max(0, ...employees.map((employee) => employee.id)) + 1,
-      name,
-      role,
-    }
+    setEmployees((currentEmployees) => {
+      const newEmployee: Employee = {
+        id:
+          Math.max(
+            0,
+            ...currentEmployees.map((employee) => employee.id)
+          ) + 1,
+        name,
+        role,
+      }
 
-    setEmployees((currentEmployees) => [...currentEmployees, newEmployee])
+      return [...currentEmployees, newEmployee]
+    })
   }
 
   function handleDeleteEmployee(id: number) {
     setEmployees((currentEmployees) =>
       currentEmployees.filter((employee) => employee.id !== id)
     )
+
+    setScheduledTasks((currentSchedule) =>
+      currentSchedule.filter((item) => item.employeeId !== id)
+    )
   }
 
   function handleEditEmployee(id: number, name: string, role: string) {
     setEmployees((currentEmployees) =>
       currentEmployees.map((employee) =>
-        employee.id === id
-          ? { ...employee, name, role }
-          : employee
+        employee.id === id ? { ...employee, name, role } : employee
       )
     )
   }
@@ -48,19 +58,26 @@ function App() {
     description: string,
     duration: number
   ) {
-    const newTask: Task = {
-      id: Math.max(0, ...tasks.map((task) => task.id)) + 1,
-      title,
-      description,
-      duration,
-    }
+    setTasks((currentTasks) => {
+      const newTask: Task = {
+        id:
+          Math.max(0, ...currentTasks.map((task) => task.id)) + 1,
+        title,
+        description,
+        duration,
+      }
 
-    setTasks((currentTasks) => [...currentTasks, newTask])
+      return [...currentTasks, newTask]
+    })
   }
 
   function handleDeleteTask(id: number) {
     setTasks((currentTasks) =>
       currentTasks.filter((task) => task.id !== id)
+    )
+
+    setScheduledTasks((currentSchedule) =>
+      currentSchedule.filter((item) => item.taskId !== id)
     )
   }
 
@@ -76,6 +93,12 @@ function App() {
           ? { ...task, title, description, duration }
           : task
       )
+    )
+  }
+
+  function handleRemoveScheduledTask(id: number) {
+    setScheduledTasks((currentSchedule) =>
+      currentSchedule.filter((item) => item.id !== id)
     )
   }
 
@@ -116,7 +139,8 @@ function App() {
       <WeekView
         employees={employees}
         tasks={tasks}
-        schedule={schedule}
+        schedule={scheduledTasks}
+        onRemoveScheduledTask={handleRemoveScheduledTask}
       />
     </main>
   )

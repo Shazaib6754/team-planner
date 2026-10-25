@@ -5,6 +5,7 @@ type WeekViewProps = {
   employees: Employee[]
   tasks: Task[]
   schedule: ScheduledTask[]
+  onRemoveScheduledTask: (id: number) => void
 }
 
 const weekdays: Weekday[] = [
@@ -15,7 +16,12 @@ const weekdays: Weekday[] = [
   'Vrijdag',
 ]
 
-function WeekView({ employees, tasks, schedule }: WeekViewProps) {
+function WeekView({
+  employees,
+  tasks,
+  schedule,
+  onRemoveScheduledTask,
+}: WeekViewProps) {
   return (
     <section className="mt-6 rounded-xl bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-xl font-semibold text-slate-800">
@@ -23,25 +29,26 @@ function WeekView({ employees, tasks, schedule }: WeekViewProps) {
       </h2>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        {weekdays.map((day) => (
-          <div
-            key={day}
-            className="rounded-lg border border-slate-200 p-3"
-          >
-            <h3 className="mb-3 font-semibold text-slate-800">
-              {day}
-            </h3>
+        {weekdays.map((day) => {
+          const dailyTasks = schedule.filter((item) => item.day === day)
 
-            <div className="space-y-3">
-              {schedule
-                .filter((item) => item.day === day)
-                .map((item) => {
+          return (
+            <div
+              key={day}
+              className="rounded-lg border border-slate-200 p-3"
+            >
+              <h3 className="mb-3 font-semibold text-slate-800">
+                {day}
+              </h3>
+
+              <div className="space-y-3">
+                {dailyTasks.map((item) => {
                   const task = tasks.find(
-                    (task) => task.id === item.taskId,
+                    (task) => task.id === item.taskId
                   )
 
                   const employee = employees.find(
-                    (employee) => employee.id === item.employeeId,
+                    (employee) => employee.id === item.employeeId
                   )
 
                   if (!task || !employee) {
@@ -64,19 +71,27 @@ function WeekView({ employees, tasks, schedule }: WeekViewProps) {
                       <p className="mt-1 text-xs text-slate-500">
                         {task.duration} minuten
                       </p>
+
+                      <button
+                        type="button"
+                        onClick={() => onRemoveScheduledTask(item.id)}
+                        className="mt-3 rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
+                      >
+                        Verwijderen uit planning
+                      </button>
                     </div>
                   )
                 })}
 
-              {schedule.filter((item) => item.day === day).length ===
-                0 && (
-                <p className="text-sm text-slate-400">
-                  Geen taken gepland
-                </p>
-              )}
+                {dailyTasks.length === 0 && (
+                  <p className="text-sm text-slate-400">
+                    Geen taken gepland
+                  </p>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </section>
   )
