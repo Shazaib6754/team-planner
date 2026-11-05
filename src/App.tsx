@@ -19,7 +19,18 @@ function App() {
   const [scheduledTasks, setScheduledTasks] =
     useState<ScheduledTask[]>(initialSchedule)
 
-  function handleAddEmployee(name: string, role: string) {
+  function handleAddEmployee(name: string, role: string): boolean {
+    const normalizedName = name.trim().toLowerCase()
+
+    const employeeExists = employees.some(
+      (employee) =>
+        employee.name.trim().toLowerCase() === normalizedName
+    )
+
+    if (employeeExists) {
+      return false
+    }
+
     setEmployees((currentEmployees) => {
       const newEmployee: Employee = {
         id:
@@ -27,12 +38,14 @@ function App() {
             0,
             ...currentEmployees.map((employee) => employee.id)
           ) + 1,
-        name,
-        role,
+        name: name.trim(),
+        role: role.trim(),
       }
 
       return [...currentEmployees, newEmployee]
     })
+
+    return true
   }
 
   function handleDeleteEmployee(id: number) {
@@ -45,12 +58,32 @@ function App() {
     )
   }
 
-  function handleEditEmployee(id: number, name: string, role: string) {
+  function handleEditEmployee(
+    id: number,
+    name: string,
+    role: string
+  ): boolean {
+    const normalizedName = name.trim().toLowerCase()
+
+    const employeeExists = employees.some(
+      (employee) =>
+        employee.id !== id &&
+        employee.name.trim().toLowerCase() === normalizedName
+    )
+
+    if (employeeExists) {
+      return false
+    }
+
     setEmployees((currentEmployees) =>
       currentEmployees.map((employee) =>
-        employee.id === id ? { ...employee, name, role } : employee
+        employee.id === id
+          ? { ...employee, name: name.trim(), role: role.trim() }
+          : employee
       )
     )
+
+    return true
   }
 
   function handleAddTask(
