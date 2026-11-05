@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Task } from '../types'
+import Button from './Button'
 
 type TaskFormProps = {
   task?: Task
@@ -147,25 +148,24 @@ function TaskForm({
       </div>
 
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <p className="text-sm text-red-600" role="alert">
+          {error}
+        </p>
       )}
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-        >
+        <Button type="submit">
           {isEditing ? 'Wijzigingen opslaan' : 'Taak toevoegen'}
-        </button>
+        </Button>
 
         {isEditing && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={onCancel}
-            className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300"
           >
             Annuleren
-          </button>
+          </Button>
         )}
       </div>
     </form>

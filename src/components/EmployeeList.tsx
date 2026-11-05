@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Employee } from '../types'
 import EmployeeForm from './EmployeeForm'
+import Button from './Button'
 
 type EmployeeListProps = {
   employees: Employee[]
@@ -11,14 +12,6 @@ type EmployeeListProps = {
 
 function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
   const [editingId, setEditingId] = useState<number | null>(null)
-
-  function handleStartEdit(employee: Employee) {
-    setEditingId(employee.id)
-  }
-
-  function handleCancelEdit() {
-    setEditingId(null)
-  }
 
   function handleDelete(employee: Employee) {
     const confirmed = window.confirm(
@@ -52,7 +45,7 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
                   key={employee.id}
                   employee={employee}
                   onEdit={onEdit}
-                  onCancel={handleCancelEdit}
+                  onCancel={() => setEditingId(null)}
                 />
               ) : (
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -67,21 +60,21 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
                   </div>
 
                   <div className="flex flex-wrap gap-2">
-                    <button
+                    <Button
                       type="button"
-                      onClick={() => handleStartEdit(employee)}
-                      className="rounded-lg bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-200"
+                      variant="secondary"
+                      onClick={() => setEditingId(employee.id)}
                     >
                       Bewerken
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       type="button"
+                      variant="danger"
                       onClick={() => handleDelete(employee)}
-                      className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
                     >
                       Verwijderen
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}

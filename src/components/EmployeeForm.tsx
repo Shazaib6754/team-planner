@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Employee } from '../types'
+import Button from './Button'
 
 type EmployeeFormProps = {
   employee?: Employee
@@ -98,21 +99,18 @@ function EmployeeForm({
       )}
 
       <div className="flex flex-wrap gap-2">
-        <button
-          type="submit"
-          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-        >
+        <Button type="submit">
           {isEditing ? 'Wijzigingen opslaan' : 'Medewerker toevoegen'}
-        </button>
+        </Button>
 
         {isEditing && (
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={onCancel}
-            className="rounded-lg bg-slate-100 px-4 py-2 font-medium text-slate-700 hover:bg-slate-200"
           >
             Annuleren
-          </button>
+          </Button>
         )}
       </div>
     </form>

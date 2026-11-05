@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import type { Task } from '../types'
 import TaskForm from './TaskForm'
+import Button from './Button'
 
 type TaskListProps = {
   tasks: Task[]
@@ -68,21 +69,21 @@ function TaskList({ tasks, onDelete, onEdit }: TaskListProps) {
                   </div>
 
                   <div className="flex shrink-0 flex-wrap gap-2">
-                    <button
+                    <Button
                       type="button"
+                      variant="secondary"
                       onClick={() => setEditingId(task.id)}
-                      className="rounded-lg bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 hover:bg-blue-200"
                     >
                       Bewerken
-                    </button>
+                    </Button>
 
-                    <button
+                    <Button
                       type="button"
+                      variant="danger"
                       onClick={() => handleDelete(task)}
-                      className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
                     >
                       Verwijderen
-                    </button>
+                    </Button>
                   </div>
                 </div>
               )}
