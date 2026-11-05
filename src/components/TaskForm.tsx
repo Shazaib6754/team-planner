@@ -1,39 +1,84 @@
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import type { Task } from '../types'
 
 type TaskFormProps = {
-  onAdd: (
+  task?: Task
+  onAdd?: (
     title: string,
     description: string,
     duration: number
   ) => void
+  onEdit?: (
+    id: number,
+    title: string,
+    description: string,
+    duration: number
+  ) => void
+  onCancel?: () => void
 }
 
-function TaskForm({ onAdd }: TaskFormProps) {
-  const [title, setTitle] = useState('')
-  const [description, setDescription] = useState('')
-  const [duration, setDuration] = useState('')
+function TaskForm({
+  task,
+  onAdd,
+  onEdit,
+  onCancel,
+}: TaskFormProps) {
+  const [title, setTitle] = useState(task?.title ?? '')
+  const [description, setDescription] = useState(
+    task?.description ?? ''
+  )
+  const [duration, setDuration] = useState(
+    task?.duration.toString() ?? ''
+  )
+  const [error, setError] = useState('')
+
+  const isEditing = task !== undefined
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
     const parsedDuration = Number(duration)
 
-    if (
-      !title.trim() ||
-      !description.trim() ||
-      !Number.isFinite(parsedDuration) ||
-      parsedDuration <= 0
-    ) {
+    if (!title.trim()) {
+      setError('Vul een titel in.')
       return
     }
 
-    onAdd(title.trim(), description.trim(), parsedDuration)
+    if (!description.trim()) {
+      setError('Vul een beschrijving in.')
+      return
+    }
 
-    setTitle('')
-    setDescription('')
-    setDuration('')
+    if (
+      !Number.isInteger(parsedDuration) ||
+      parsedDuration <= 0
+    ) {
+      setError('Vul een geldig aantal minuten in.')
+      return
+    }
+
+    if (isEditing) {
+      onEdit?.(
+        task.id,
+        title.trim(),
+        description.trim(),
+        parsedDuration
+      )
+      onCancel?.()
+    } else {
+      onAdd?.(
+        title.trim(),
+        description.trim(),
+        parsedDuration
+      )
+      setTitle('')
+      setDescription('')
+      setDuration('')
+    }
+
+    setError('')
   }
 
   return (
@@ -42,7 +87,7 @@ function TaskForm({ onAdd }: TaskFormProps) {
       className="mb-4 space-y-3 rounded-lg border border-slate-200 p-4"
     >
       <h3 className="font-semibold text-slate-800">
-        Taak toevoegen
+        {isEditing ? 'Taak bewerken' : 'Taak toevoegen'}
       </h3>
 
       <div>
@@ -52,7 +97,6 @@ function TaskForm({ onAdd }: TaskFormProps) {
         >
           Titel
         </label>
-
         <input
           id="task-title"
           type="text"
@@ -71,7 +115,6 @@ function TaskForm({ onAdd }: TaskFormProps) {
         >
           Beschrijving
         </label>
-
         <textarea
           id="task-description"
           value={description}
@@ -90,7 +133,6 @@ function TaskForm({ onAdd }: TaskFormProps) {
         >
           Duur in minuten
         </label>
-
         <input
           id="task-duration"
           type="number"
@@ -104,12 +146,28 @@ function TaskForm({ onAdd }: TaskFormProps) {
         />
       </div>
 
-      <button
-        type="submit"
-        className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-      >
-        Taak toevoegen
-      </button>
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+
+      <div className="flex gap-2">
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+        >
+          {isEditing ? 'Wijzigingen opslaan' : 'Taak toevoegen'}
+        </button>
+
+        {isEditing && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg bg-slate-200 px-4 py-2 font-medium text-slate-700 hover:bg-slate-300"
+          >
+            Annuleren
+          </button>
+        )}
+      </div>
     </form>
   )
 }

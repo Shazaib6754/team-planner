@@ -1,15 +1,26 @@
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
+import type { Employee } from '../types'
 
 type EmployeeFormProps = {
-  onAdd: (name: string, role: string) => boolean
+  employee?: Employee
+  onAdd?: (name: string, role: string) => boolean
+  onEdit?: (id: number, name: string, role: string) => boolean
+  onCancel?: () => void
 }
 
-function EmployeeForm({ onAdd }: EmployeeFormProps) {
-  const [name, setName] = useState('')
-  const [role, setRole] = useState('')
+function EmployeeForm({
+  employee,
+  onAdd,
+  onEdit,
+  onCancel,
+}: EmployeeFormProps) {
+  const [name, setName] = useState(employee?.name ?? '')
+  const [role, setRole] = useState(employee?.role ?? '')
   const [error, setError] = useState('')
+
+  const isEditing = employee !== undefined
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -24,37 +35,40 @@ function EmployeeForm({ onAdd }: EmployeeFormProps) {
       return
     }
 
-    const added = onAdd(name.trim(), role.trim())
+    const success = isEditing
+      ? onEdit?.(employee.id, name.trim(), role.trim())
+      : onAdd?.(name.trim(), role.trim())
 
-    if (!added) {
+    if (!success) {
       setError('Deze medewerker bestaat al. Gebruik een andere naam.')
       return
     }
 
     setError('')
-    setName('')
-    setRole('')
+
+    if (isEditing) {
+      onCancel?.()
+    } else {
+      setName('')
+      setRole('')
+    }
   }
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="mb-4 space-y-3 rounded-lg border border-slate-200 p-4"
+      className="space-y-3 rounded-lg border border-slate-200 p-4"
     >
       <h3 className="font-semibold text-slate-800">
-        Medewerker toevoegen
+        {isEditing ? 'Medewerker bewerken' : 'Medewerker toevoegen'}
       </h3>
 
       <div>
-        <label
-          htmlFor="employee-name"
-          className="mb-1 block text-sm text-slate-600"
-        >
+        <label className="mb-1 block text-sm text-slate-600">
           Naam
         </label>
 
         <input
-          id="employee-name"
           type="text"
           value={name}
           onChange={(event) => setName(event.target.value)}
@@ -64,15 +78,11 @@ function EmployeeForm({ onAdd }: EmployeeFormProps) {
       </div>
 
       <div>
-        <label
-          htmlFor="employee-role"
-          className="mb-1 block text-sm text-slate-600"
-        >
+        <label className="mb-1 block text-sm text-slate-600">
           Functie
         </label>
 
         <input
-          id="employee-role"
           type="text"
           value={role}
           onChange={(event) => setRole(event.target.value)}
@@ -87,12 +97,24 @@ function EmployeeForm({ onAdd }: EmployeeFormProps) {
         </p>
       )}
 
-      <button
-        type="submit"
-        className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
-      >
-        Medewerker toevoegen
-      </button>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="submit"
+          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700"
+        >
+          {isEditing ? 'Wijzigingen opslaan' : 'Medewerker toevoegen'}
+        </button>
+
+        {isEditing && (
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg bg-slate-100 px-4 py-2 font-medium text-slate-700 hover:bg-slate-200"
+          >
+            Annuleren
+          </button>
+        )}
+      </div>
     </form>
   )
 }
