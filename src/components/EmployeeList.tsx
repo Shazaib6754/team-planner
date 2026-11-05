@@ -5,32 +5,47 @@ import type { Employee } from '../types'
 type EmployeeListProps = {
   employees: Employee[]
   onDelete: (id: number) => void
-  onEdit: (id: number, name: string, role: string) => void
+  onEdit: (id: number, name: string, role: string) => boolean
 }
 
 function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [editName, setEditName] = useState('')
   const [editRole, setEditRole] = useState('')
+  const [error, setError] = useState('')
 
   function handleStartEdit(employee: Employee) {
     setEditingId(employee.id)
     setEditName(employee.name)
     setEditRole(employee.role)
+    setError('')
   }
 
   function handleCancelEdit() {
     setEditingId(null)
     setEditName('')
     setEditRole('')
+    setError('')
   }
 
   function handleSaveEdit(id: number) {
-    if (!editName.trim() || !editRole.trim()) {
+    if (!editName.trim()) {
+      setError('Vul een naam in.')
       return
     }
 
-    onEdit(id, editName.trim(), editRole.trim())
+    if (!editRole.trim()) {
+      setError('Vul een functie in.')
+      return
+    }
+
+    const updated = onEdit(id, editName.trim(), editRole.trim())
+
+    if (!updated) {
+      setError('Deze medewerker bestaat al. Gebruik een andere naam.')
+      return
+    }
+
     handleCancelEdit()
   }
 
@@ -75,7 +90,10 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
                       id={`edit-name-${employee.id}`}
                       type="text"
                       value={editName}
-                      onChange={(event) => setEditName(event.target.value)}
+                      onChange={(event) => {
+                        setEditName(event.target.value)
+                        setError('')
+                      }}
                       className="w-full rounded-lg border border-slate-300 px-3 py-2"
                       required
                     />
@@ -93,11 +111,20 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
                       id={`edit-role-${employee.id}`}
                       type="text"
                       value={editRole}
-                      onChange={(event) => setEditRole(event.target.value)}
+                      onChange={(event) => {
+                        setEditRole(event.target.value)
+                        setError('')
+                      }}
                       className="w-full rounded-lg border border-slate-300 px-3 py-2"
                       required
                     />
                   </div>
+
+                  {error && (
+                    <p className="text-sm text-red-600" role="alert">
+                      {error}
+                    </p>
+                  )}
 
                   <div className="flex flex-wrap gap-2">
                     <button
