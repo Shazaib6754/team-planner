@@ -1,6 +1,8 @@
 
+import type { ReactNode } from 'react'
+
 type ButtonProps = {
-  children: React.ReactNode
+  children: ReactNode
   type?: 'button' | 'submit'
   variant?: 'primary' | 'secondary' | 'danger'
   onClick?: () => void
