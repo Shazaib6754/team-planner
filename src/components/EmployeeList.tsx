@@ -34,6 +34,16 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
     handleCancelEdit()
   }
 
+  function handleDelete(employee: Employee) {
+    const confirmed = window.confirm(
+      `Weet je zeker dat je ${employee.name} wilt verwijderen?`
+    )
+
+    if (confirmed) {
+      onDelete(employee.id)
+    }
+  }
+
   return (
     <section className="rounded-xl bg-white p-6 shadow-sm">
       <h2 className="mb-4 text-xl font-semibold text-slate-800">
@@ -130,7 +140,7 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
 
                     <button
                       type="button"
-                      onClick={() => onDelete(employee.id)}
+                      onClick={() => handleDelete(employee)}
                       className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-200"
                     >
                       Verwijderen
