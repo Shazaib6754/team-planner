@@ -7,6 +7,10 @@ import {
 } from './data/mockData'
 import type { Employee, Task, ScheduledTask } from './types'
 import { isTaskFull } from './utils/scheduleRules'
+import {
+  getMondayDateString,
+  changeWeek,
+} from './utils/weekUtils'
 import EmployeeList from './components/EmployeeList'
 import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
@@ -18,6 +22,17 @@ function App() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks)
   const [scheduledTasks, setScheduledTasks] =
     useState<ScheduledTask[]>(initialSchedule)
+
+  const [activeWeekStart, setActiveWeekStart] =
+    useState<string>(getMondayDateString())
+
+  function handlePreviousWeek() {
+    setActiveWeekStart((currentWeek) => changeWeek(currentWeek, -1))
+  }
+
+  function handleNextWeek() {
+    setActiveWeekStart((currentWeek) => changeWeek(currentWeek, 1))
+  }
 
   function handleAddEmployee(name: string, role: string): boolean {
     const normalizedName = name.trim().toLowerCase()
@@ -130,8 +145,7 @@ function App() {
 
       return isTaskFull(
         scheduledTasks.filter(
-          (scheduledItem) =>
-            scheduledItem.id !== item.id
+          (scheduledItem) => scheduledItem.id !== item.id
         ),
         id,
         maxEmployees,
@@ -199,6 +213,9 @@ function App() {
         employees={employees}
         tasks={tasks}
         schedule={scheduledTasks}
+        activeWeekStart={activeWeekStart}
+        onPreviousWeek={handlePreviousWeek}
+        onNextWeek={handleNextWeek}
         onRemoveScheduledTask={handleRemoveScheduledTask}
       />
     </main>
