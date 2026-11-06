@@ -1,139 +1,29 @@
-
-import { useState } from 'react'
 import './App.css'
-import {
-  employees as initialEmployees,
-  tasks as initialTasks,
-  schedule as initialSchedule,
-} from './data/mockData'
-import type { Employee, Task, ScheduledTask } from './types'
 import EmployeeList from './components/EmployeeList'
 import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
 import TaskForm from './components/TaskForm'
+import ScheduleForm from './components/ScheduleForm'
 import WeekView from './components/WeekView'
+import { useTeamPlanner } from './hooks/useTeamPlanner'
 
 function App() {
-  const [employees, setEmployees] = useState<Employee[]>(initialEmployees)
-  const [tasks, setTasks] = useState<Task[]>(initialTasks)
-  const [scheduledTasks, setScheduledTasks] =
-    useState<ScheduledTask[]>(initialSchedule)
-
-  function handleAddEmployee(name: string, role: string): boolean {
-    const normalizedName = name.trim().toLowerCase()
-
-    const employeeExists = employees.some(
-      (employee) =>
-        employee.name.trim().toLowerCase() === normalizedName
-    )
-
-    if (employeeExists) {
-      return false
-    }
-
-    setEmployees((currentEmployees) => {
-      const newEmployee: Employee = {
-        id:
-          Math.max(
-            0,
-            ...currentEmployees.map((employee) => employee.id)
-          ) + 1,
-        name: name.trim(),
-        role: role.trim(),
-      }
-
-      return [...currentEmployees, newEmployee]
-    })
-
-    return true
-  }
-
-  function handleDeleteEmployee(id: number) {
-    setEmployees((currentEmployees) =>
-      currentEmployees.filter((employee) => employee.id !== id)
-    )
-
-    setScheduledTasks((currentSchedule) =>
-      currentSchedule.filter((item) => item.employeeId !== id)
-    )
-  }
-
-  function handleEditEmployee(
-    id: number,
-    name: string,
-    role: string
-  ): boolean {
-    const normalizedName = name.trim().toLowerCase()
-
-    const employeeExists = employees.some(
-      (employee) =>
-        employee.id !== id &&
-        employee.name.trim().toLowerCase() === normalizedName
-    )
-
-    if (employeeExists) {
-      return false
-    }
-
-    setEmployees((currentEmployees) =>
-      currentEmployees.map((employee) =>
-        employee.id === id
-          ? { ...employee, name: name.trim(), role: role.trim() }
-          : employee
-      )
-    )
-
-    return true
-  }
-
-  function handleAddTask(
-    title: string,
-    description: string,
-    duration: number
-  ) {
-    setTasks((currentTasks) => {
-      const newTask: Task = {
-        id:
-          Math.max(0, ...currentTasks.map((task) => task.id)) + 1,
-        title,
-        description,
-        duration,
-      }
-
-      return [...currentTasks, newTask]
-    })
-  }
-
-  function handleDeleteTask(id: number) {
-    setTasks((currentTasks) =>
-      currentTasks.filter((task) => task.id !== id)
-    )
-
-    setScheduledTasks((currentSchedule) =>
-      currentSchedule.filter((item) => item.taskId !== id)
-    )
-  }
-
-  function handleEditTask(
-    id: number,
-    title: string,
-    description: string,
-    duration: number
-  ) {
-    setTasks((currentTasks) =>
-      currentTasks.map((task) =>
-        task.id === id
-          ? { ...task, title, description, duration }
-          : task
-      )
-    )
-  }
-
-  function handleRemoveScheduledTask(id: number) {
-    setScheduledTasks((currentSchedule) =>
-      currentSchedule.filter((item) => item.id !== id)
-    )
-  }
+  const {
+    employees,
+    tasks,
+    scheduledTasks,
+    activeWeekStart,
+    handlePreviousWeek,
+    handleNextWeek,
+    handleAddEmployee,
+    handleDeleteEmployee,
+    handleEditEmployee,
+    handleAddTask,
+    handleDeleteTask,
+    handleEditTask,
+    handleAddScheduledTask,
+    handleRemoveScheduledTask,
+  } = useTeamPlanner()
 
   return (
     <main className="min-h-screen bg-slate-100 p-8">
@@ -169,10 +59,21 @@ function App() {
         </section>
       </div>
 
+      <div className="mt-6">
+        <ScheduleForm
+          employees={employees}
+          tasks={tasks}
+          onAdd={handleAddScheduledTask}
+        />
+      </div>
+
       <WeekView
         employees={employees}
         tasks={tasks}
         schedule={scheduledTasks}
+        activeWeekStart={activeWeekStart}
+        onPreviousWeek={handlePreviousWeek}
+        onNextWeek={handleNextWeek}
         onRemoveScheduledTask={handleRemoveScheduledTask}
       />
     </main>
