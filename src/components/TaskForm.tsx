@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Task } from '../types'
 import Button from './Button'
+import TaskFormFields from './TaskFormFields'
 
 type TaskFormProps = {
   task?: Task
@@ -113,81 +114,16 @@ function TaskForm({
         {isEditing ? 'Taak bewerken' : 'Taak toevoegen'}
       </h3>
 
-      <div>
-        <label
-          htmlFor="task-title"
-          className="mb-1 block text-sm text-slate-600"
-        >
-          Titel
-        </label>
-        <input
-          id="task-title"
-          type="text"
-          value={title}
-          onChange={(event) => setTitle(event.target.value)}
-          placeholder="Bijvoorbeeld onderhoud uitvoeren"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="task-description"
-          className="mb-1 block text-sm text-slate-600"
-        >
-          Beschrijving
-        </label>
-        <textarea
-          id="task-description"
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          placeholder="Beschrijf wat er moet gebeuren"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
-          rows={3}
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="task-duration"
-          className="mb-1 block text-sm text-slate-600"
-        >
-          Duur in minuten
-        </label>
-        <input
-          id="task-duration"
-          type="number"
-          min="1"
-          step="1"
-          value={duration}
-          onChange={(event) => setDuration(event.target.value)}
-          placeholder="Bijvoorbeeld 60"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
-          required
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="task-max-employees"
-          className="mb-1 block text-sm text-slate-600"
-        >
-          Maximumaantal medewerkers
-        </label>
-        <input
-          id="task-max-employees"
-          type="number"
-          min="1"
-          step="1"
-          value={maxEmployees}
-          onChange={(event) => setMaxEmployees(event.target.value)}
-          placeholder="Bijvoorbeeld 3"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2"
-          required
-        />
-      </div>
+      <TaskFormFields
+        title={title}
+        description={description}
+        duration={duration}
+        maxEmployees={maxEmployees}
+        onTitleChange={setTitle}
+        onDescriptionChange={setDescription}
+        onDurationChange={setDuration}
+        onMaxEmployeesChange={setMaxEmployees}
+      />
 
       {error && (
         <p className="text-sm text-red-600" role="alert">
