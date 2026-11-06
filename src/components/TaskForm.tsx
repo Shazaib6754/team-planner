@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import type { Task } from '../types'
@@ -9,14 +8,16 @@ type TaskFormProps = {
   onAdd?: (
     title: string,
     description: string,
-    duration: number
+    duration: number,
+    maxEmployees: number
   ) => void
   onEdit?: (
     id: number,
     title: string,
     description: string,
-    duration: number
-  ) => void
+    duration: number,
+    maxEmployees: number
+  ) => boolean
   onCancel?: () => void
 }
 
@@ -33,6 +34,9 @@ function TaskForm({
   const [duration, setDuration] = useState(
     task?.duration.toString() ?? ''
   )
+  const [maxEmployees, setMaxEmployees] = useState(
+    task?.maxEmployees.toString() ?? '1'
+  )
   const [error, setError] = useState('')
 
   const isEditing = task !== undefined
@@ -41,6 +45,7 @@ function TaskForm({
     event.preventDefault()
 
     const parsedDuration = Number(duration)
+    const parsedMaxEmployees = Number(maxEmployees)
 
     if (!title.trim()) {
       setError('Vul een titel in.')
@@ -52,31 +57,48 @@ function TaskForm({
       return
     }
 
-    if (
-      !Number.isInteger(parsedDuration) ||
-      parsedDuration <= 0
-    ) {
+    if (!Number.isInteger(parsedDuration) || parsedDuration <= 0) {
       setError('Vul een geldig aantal minuten in.')
       return
     }
 
+    if (
+      !Number.isInteger(parsedMaxEmployees) ||
+      parsedMaxEmployees <= 0
+    ) {
+      setError('Vul een geldig maximumaantal medewerkers in.')
+      return
+    }
+
     if (isEditing) {
-      onEdit?.(
+      const updated = onEdit?.(
         task.id,
         title.trim(),
         description.trim(),
-        parsedDuration
+        parsedDuration,
+        parsedMaxEmployees
       )
+
+      if (!updated) {
+        setError(
+          'Het maximum kan niet lager zijn dan het aantal ingeplande medewerkers.'
+        )
+        return
+      }
+
       onCancel?.()
     } else {
       onAdd?.(
         title.trim(),
         description.trim(),
-        parsedDuration
+        parsedDuration,
+        parsedMaxEmployees
       )
+
       setTitle('')
       setDescription('')
       setDuration('')
+      setMaxEmployees('1')
     }
 
     setError('')
@@ -142,6 +164,26 @@ function TaskForm({
           value={duration}
           onChange={(event) => setDuration(event.target.value)}
           placeholder="Bijvoorbeeld 60"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2"
+          required
+        />
+      </div>
+
+      <div>
+        <label
+          htmlFor="task-max-employees"
+          className="mb-1 block text-sm text-slate-600"
+        >
+          Maximumaantal medewerkers
+        </label>
+        <input
+          id="task-max-employees"
+          type="number"
+          min="1"
+          step="1"
+          value={maxEmployees}
+          onChange={(event) => setMaxEmployees(event.target.value)}
+          placeholder="Bijvoorbeeld 3"
           className="w-full rounded-lg border border-slate-300 px-3 py-2"
           required
         />

@@ -1,4 +1,3 @@
-
 export type Employee = {
   id: number
   name: string
@@ -10,6 +9,7 @@ export type Task = {
   title: string
   description: string
   duration: number
+  maxEmployees: number
 }
 
 export type Weekday =
@@ -24,4 +24,5 @@ export type ScheduledTask = {
   taskId: number
   employeeId: number
   day: Weekday
+  weekStart: string
 }

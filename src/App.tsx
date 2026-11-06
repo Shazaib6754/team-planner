@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import './App.css'
 import {
@@ -7,6 +6,7 @@ import {
   schedule as initialSchedule,
 } from './data/mockData'
 import type { Employee, Task, ScheduledTask } from './types'
+import { isTaskFull } from './utils/scheduleRules'
 import EmployeeList from './components/EmployeeList'
 import EmployeeForm from './components/EmployeeForm'
 import TaskList from './components/TaskList'
@@ -89,7 +89,8 @@ function App() {
   function handleAddTask(
     title: string,
     description: string,
-    duration: number
+    duration: number,
+    maxEmployees: number
   ) {
     setTasks((currentTasks) => {
       const newTask: Task = {
@@ -98,6 +99,7 @@ function App() {
         title,
         description,
         duration,
+        maxEmployees,
       }
 
       return [...currentTasks, newTask]
@@ -118,15 +120,39 @@ function App() {
     id: number,
     title: string,
     description: string,
-    duration: number
-  ) {
+    duration: number,
+    maxEmployees: number
+  ): boolean {
+    const hasTooManyEmployees = scheduledTasks.some((item) => {
+      if (item.taskId !== id) {
+        return false
+      }
+
+      return isTaskFull(
+        scheduledTasks.filter(
+          (scheduledItem) =>
+            scheduledItem.id !== item.id
+        ),
+        id,
+        maxEmployees,
+        item.day,
+        item.weekStart
+      )
+    })
+
+    if (hasTooManyEmployees) {
+      return false
+    }
+
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
         task.id === id
-          ? { ...task, title, description, duration }
+          ? { ...task, title, description, duration, maxEmployees }
           : task
       )
     )
+
+    return true
   }
 
   function handleRemoveScheduledTask(id: number) {

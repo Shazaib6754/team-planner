@@ -1,4 +1,3 @@
-
 import { useState } from 'react'
 import type { Task } from '../types'
 import TaskForm from './TaskForm'
@@ -11,8 +10,9 @@ type TaskListProps = {
     id: number,
     title: string,
     description: string,
-    duration: number
-  ) => void
+    duration: number,
+    maxEmployees: number
+  ) => boolean
 }
 
 function TaskList({ tasks, onDelete, onEdit }: TaskListProps) {
@@ -65,6 +65,10 @@ function TaskList({ tasks, onDelete, onEdit }: TaskListProps) {
 
                     <p className="mt-2 text-sm font-medium text-blue-600">
                       Duur: {task.duration} minuten
+                    </p>
+
+                    <p className="mt-1 text-sm font-medium text-blue-600">
+                      Maximaal {task.maxEmployees} medewerkers
                     </p>
                   </div>
 
