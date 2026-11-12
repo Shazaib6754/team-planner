@@ -12,6 +12,21 @@ type EmployeeListProps = {
 
 function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
   const [editingId, setEditingId] = useState<number | null>(null)
+  const [searchName, setSearchName] = useState('')
+  const [selectedRole, setSelectedRole] = useState('')
+
+  const roles = [...new Set(employees.map((employee) => employee.role))]
+
+  const filteredEmployees = employees.filter((employee) => {
+    const matchesName = employee.name
+      .toLowerCase()
+      .includes(searchName.trim().toLowerCase())
+
+    const matchesRole =
+      selectedRole === '' || employee.role === selectedRole
+
+    return matchesName && matchesRole
+  })
 
   function handleDelete(employee: Employee) {
     const confirmed = window.confirm(
@@ -29,13 +44,44 @@ function EmployeeList({ employees, onDelete, onEdit }: EmployeeListProps) {
         Medewerkers
       </h2>
 
+      {employees.length > 0 && (
+        <div className="mb-4 grid gap-3 sm:grid-cols-2">
+          <input
+            type="search"
+            value={searchName}
+            onChange={(event) => setSearchName(event.target.value)}
+            placeholder="Zoek op naam..."
+            aria-label="Zoek medewerkers op naam"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          />
+
+          <select
+            value={selectedRole}
+            onChange={(event) => setSelectedRole(event.target.value)}
+            aria-label="Filter medewerkers op functie"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
+          >
+            <option value="">Alle functies</option>
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
       {employees.length === 0 ? (
         <p className="text-sm text-slate-500">
           Er zijn nog geen medewerkers toegevoegd.
         </p>
+      ) : filteredEmployees.length === 0 ? (
+        <p className="text-sm text-slate-500">
+          Geen medewerkers gevonden met deze filters.
+        </p>
       ) : (
         <ul className="space-y-3">
-          {employees.map((employee) => (
+          {filteredEmployees.map((employee) => (
             <li
               key={employee.id}
               className="rounded-lg border border-slate-200 p-3"
