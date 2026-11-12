@@ -1,3 +1,4 @@
+
 import type { Employee, Task, ScheduledTask, Weekday } from '../types'
 import WeekDayColumn from './WeekDayColumn'
 
@@ -40,6 +41,23 @@ function WeekView({
 
   const weekLabel = `${monday.toLocaleDateString('nl-NL', dateFormat)} - ${friday.toLocaleDateString('nl-NL', dateFormat)}`
 
+  const weeklySchedule = schedule.filter(
+    (item) => item.weekStart === activeWeekStart
+  )
+
+  const employeeWorkdays = employees.map((employee) => {
+    const scheduledDays = new Set(
+      weeklySchedule
+        .filter((item) => item.employeeId === employee.id)
+        .map((item) => item.day)
+    )
+
+    return {
+      ...employee,
+      scheduledDays: scheduledDays.size,
+    }
+  })
+
   return (
     <section className="mt-6 rounded-xl bg-white p-6 shadow-sm">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
@@ -70,6 +88,35 @@ function WeekView({
             Volgende week
           </button>
         </div>
+      </div>
+
+      <div className="mb-6 rounded-lg border border-slate-200 p-4">
+        <h3 className="mb-3 font-semibold text-slate-800">
+          Ingeplande dagen per medewerker
+        </h3>
+
+        {employeeWorkdays.length === 0 ? (
+          <p className="text-sm text-slate-500">
+            Er zijn nog geen medewerkers toegevoegd.
+          </p>
+        ) : (
+          <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+            {employeeWorkdays.map((employee) => (
+              <li
+                key={employee.id}
+                className="flex items-center justify-between rounded-lg bg-slate-50 p-3"
+              >
+                <span className="text-sm font-medium text-slate-700">
+                  {employee.name}
+                </span>
+
+                <span className="text-sm font-semibold text-blue-700">
+                  {employee.scheduledDays} {employee.scheduledDays === 1 ? 'dag' : 'dagen'}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
