@@ -78,6 +78,7 @@ function WeekDayColumn({
           ).length
 
           const isFull = assignedCount >= task.maxEmployees
+          const isNotFullyStaffed = assignedCount < task.maxEmployees
 
           return (
             <div
@@ -99,6 +100,12 @@ function WeekDayColumn({
               <p className="mt-1 text-xs text-slate-600">
                 {assignedCount} / {task.maxEmployees} medewerkers
               </p>
+
+              {isNotFullyStaffed && (
+                <p className="mt-1 text-xs font-semibold text-amber-600">
+                  Taak is nog niet volledig bezet
+                </p>
+              )}
 
               {isFull && (
                 <p className="mt-1 text-xs font-semibold text-red-600">
